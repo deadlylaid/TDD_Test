@@ -1,6 +1,7 @@
 from django.core.urlresolvers import resolve
 from django.test import TestCase
 from django.http import HttpRequest
+from django.templates.loader import render_to_string
 
 from lists.views import home_page
 
@@ -15,5 +16,7 @@ class HomePageTest(TestCase):
         response = home_page(request)
         self.assertTrue(response.content.startswith(b'<html>'))
         self.assertIn(b'<title>To-Do lists</title>', response.content)
-        self.assertTrue(response.content.endswith(b'</html>'))
+
+#strip() 은 텍스트 편집기에 따라 파일 마지막에 라인(\n)이 강제로 추가되는 것을 방지하기 위해 쓴다
+        self.assertTrue(response.content.strip().endswith(b'</html>'))
 # Create your tests here.
