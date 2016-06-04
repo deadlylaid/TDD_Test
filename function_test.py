@@ -6,7 +6,7 @@ class NewVisitorTest(unittest.TestCase):
 
     def setUp(self):
         self.browser = webdriver.Firefox()
-        self.browser.implicitly_wait(3)
+
 
     def tearDown(self):
         self.browser.quit()
@@ -38,8 +38,8 @@ class NewVisitorTest(unittest.TestCase):
 
         table = self.browser.find_element_by_id('id_list_table')
         rows = table.find_elements_by_tag_name('tr')
-        self.assertTrue(
-                any(row.text == '1: 공작깃털 사기' for row in rows),
+        self.assertIn(
+                '1: 공작깃털 사기',[row.text for row in rows]
         )
 
 
