@@ -45,14 +45,25 @@ class NewVisitorTest(unittest.TestCase):
 
         #추가 아이템을 입력할 수 있는 여분의 텍스트 상자가 존재한다
         #다시 "공작깃털을 이용해서 그물 만들기"라고 입력한다(민수는 매우 체계적인 사람이다)
-        self.fail('테스트를 끝내라!!')
+        inputbox = self.browser.find_element_by_id('id_new_item')
+        inputbox.send_keys('공작깃털을 이용해서 그물 만들기')
+        inputbox.send_keys(Keys.ENTER)
 
 
         #페이지는 다시 갱신되고, 두 개 아이템이 목록에 보인다
+        table = self.browser.find_element_by_id('id_list_table')
+        rows = table.find_elements_by_tag_name('tr')
+        self.assertIn(
+                '1: 공작깃털 사기',[row.text for row in rows]
+        )
+
+        self.assertIn(
+                '2: 공작깃털을 이용해서 그물 만들기',[row.text for row in rows]
+        )
         #민수는 사이트가 입력한 목록을 저장하고 있는지 궁금하다
         #사이트는 그를 위한 특정 URL을 생성해준다
         #이때 URL에 대한 설명도 함께 제공한다.
-
+        self.fail('테스트를 끝내자')
 
         #해당 URL에 접속하면 그가 만든 작업 목록이 그대로 있는 것을 확인할 수 있다
 
