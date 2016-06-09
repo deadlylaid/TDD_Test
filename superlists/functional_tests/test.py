@@ -44,7 +44,7 @@ class NewVisitorTest(LiveServerTestCase):
         inputbox.send_keys(Keys.ENTER)
         minsoo_list_url = self.browser.current_url
         self.assertRegex(minsoo_list_url, '/lists/.+')
-        self.check_for_row_in_list_table('1:공작깃털 사기')
+        self.check_for_row_in_list_table('1: 공작깃털 사기')
         
 
         #추가 아이템을 입력할 수 있는 여분의 텍스트 상자가 존재한다
@@ -64,11 +64,11 @@ class NewVisitorTest(LiveServerTestCase):
         ##쿠키를 통해 유입되는 것을 방지한다.
         self.browser.quit()
         self.browser = webdriver.Firefox()
-
+        
         ##남의현이 브라우저에 접속한다.
         ##민수의 리스트는 보이지 않는다.
         self.browser.get(self.live_server_url)
-        page_text = self.browser.find_elements_by_tag_name('body').text
+        page_text = self.browser.find_element_by_tag_name('body').text
         self.assertNotIn('공작깃털 사기', page_text)
         self.assertNotIn('그물 만들기', page_text)
 
@@ -76,14 +76,15 @@ class NewVisitorTest(LiveServerTestCase):
         ## 그녀는 민수보다 재미가 없다
         inputbox = self.browser.find_element_by_id('id_new_item')
         inputbox.send_keys('우유 사기')
-        inputbox.send_keys(Keys.ENETER)
+        inputbox.send_keys(Keys.ENTER)
 
         #남의현이 전용 URL을 취득한다
         euihyun_list_url = self.browser.current_url
-        self.asserRegex(euihyun_list_url, '/list/.+')
+        self.assertRegex(euihyun_list_url, '/lists/.+')
         self.assertNotEqual(euihyun_list_url, minsoo_list_url)
 
         #민수가 입력한 흔적이 없다는 것을 다시 확인한다.
         page_text = self.browser.find_elements_by_tag_name('body').text
         self.assertNotIn('공작깃털 사기', page_text)
         self.assertNotIn('그물 만들기', page_text)
+
