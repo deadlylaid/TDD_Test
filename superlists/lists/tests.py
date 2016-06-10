@@ -39,11 +39,6 @@ class HomePageTest(TestCase):
         self.assertEqual(response.content.decode(), expected_html)
         self.assertIn(b'<title>To-Do lists</title>', response.content)
 
-    def test_home_page_only_saves_only_items_when_necessary(self):
-        request = HttpRequest()
-        home_page(request)
-        self.assertEqual(Item.objects.count(), 0)
-
 
 class ListViewTest(TestCase):
 
@@ -62,11 +57,6 @@ class ListViewTest(TestCase):
 
     def test_saving_a_POST_request(self):
 #
-#        request = HttpRequest()
-#        request.method = 'POST'
-#        request.POST['item_text'] = '신규 작업 아이템'
-#
-#        response = home_page(request)
         self.client.post(
                 '/lists/new',
                 data = {
@@ -79,11 +69,6 @@ class ListViewTest(TestCase):
         self.assertEqual(new_item.text, '신규 작업 아이템')
 
     def test_redirects_after_POST(self):
-#        request = HttpRequest()
-#        request.method = 'POST'
-#        request.POST['item_text'] = '신규 작업 아이템'
-#
-#        response = home_page(request)
 
         response = self.client.post(
                 '/lists/new',
