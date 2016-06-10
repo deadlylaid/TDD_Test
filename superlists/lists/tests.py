@@ -25,6 +25,7 @@ class ItemModelTest(TestCase):
         self.assertEqual(first_saved_item.text, '첫 번째 아이템')
         self.assertEqual(second_saved_item.text, '두 번째 아이템')
 
+
 class HomePageTest(TestCase):
 
     def test_root_url_resolves_to_home_page_view(self):
@@ -37,33 +38,12 @@ class HomePageTest(TestCase):
         expected_html = render_to_string('home.html', request=request)
         self.assertEqual(response.content.decode(), expected_html)
         self.assertIn(b'<title>To-Do lists</title>', response.content)
-    
-    def test_home_page_can_save_a_POST_request(self):
-        request = HttpRequest()
-        request.method = 'POST'
-        request.POST['item_text'] = '신규 작업 아이템'
-
-        response = home_page(request)
-
-        self.assertEqual(Item.objects.count(), 1)
-        new_item = Item.objects.first()
-        self.assertEqual(new_item.text, '신규 작업 아이템')
-
-    def test_home_page_redirect_after_POST(self):
-        request = HttpRequest()
-        request.method = 'POST'
-        request.POST['item_text'] = '신규 작업 아이템'
-
-        response = home_page(request)
-
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(response['location'], '/lists/the-only-list-in-the-world/')
-
 
     def test_home_page_only_saves_only_items_when_necessary(self):
         request = HttpRequest()
         home_page(request)
         self.assertEqual(Item.objects.count(), 0)
+
 
 class ListViewTest(TestCase):
 
@@ -80,6 +60,40 @@ class ListViewTest(TestCase):
         self.assertContains(response, 'itemey 1')
         self.assertContains(response, 'itemey 2')
 
+    def test_saving_a_POST_request(self):
+#
+#        request = HttpRequest()
+#        request.method = 'POST'
+#        request.POST['item_text'] = '신규 작업 아이템'
+#
+#        response = home_page(request)
+        self.client.post(
+                '/lists/new',
+                data = {
+                    'item_text': '신규 작업 아이템'
+                    }
+                )
+
+        self.assertEqual(Item.objects.count(), 1)
+        new_item = Item.objects.first()
+        self.assertEqual(new_item.text, '신규 작업 아이템')
+
+    def test_redirects_after_POST(self):
+#        request = HttpRequest()
+#        request.method = 'POST'
+#        request.POST['item_text'] = '신규 작업 아이템'
+#
+#        response = home_page(request)
+
+        response = self.client.post(
+                '/lists/new',
+                data={
+                    'item_text': '신규 작업 아이템'
+                    }
+                )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['location'], '/lists/the-only-list-in-the-world/')
 #strip() 은 텍스트 편집기에 따라 파일 마지막에 라인(\n)이 강제로 추가되는 것을 방지하기 위해 쓴다
 #        self.assertTrue(response.content.strip().endswith(b'</html>'))
 # Create your tests here.
