@@ -84,7 +84,6 @@ class NewVisitorTest(LiveServerTestCase):
         self.assertNotEqual(euihyun_list_url, minsoo_list_url)
 
         #민수가 입력한 흔적이 없다는 것을 다시 확인한다.
-        page_text = self.browser.find_elements_by_tag_name('body').text
+        page_text = self.browser.find_element_by_tag_name('body').text
         self.assertNotIn('공작깃털 사기', page_text)
         self.assertNotIn('그물 만들기', page_text)
-
