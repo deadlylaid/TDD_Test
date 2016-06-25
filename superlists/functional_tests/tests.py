@@ -32,7 +32,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
     def test_can_start_a_list_and_retrieve_it_later(self):
         # 민수는 멋진 작업 목록 온라인 앱이 나왔다는 소식을 듣고
         # 해당 웹사이트로 이동한다
-        self.browser.get(self.live_server_url)
+        self.browser.get(self.server_url)
 
         # 웹페이지 타이틀과 헤더가 'To-Do'를 표시하고 있다
         self.assertIn('To-Do', self.browser.title)
@@ -78,7 +78,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
         
         ##남의현이 브라우저에 접속한다.
         ##민수의 리스트는 보이지 않는다.
-        self.browser.get(self.live_server_url)
+        self.browser.get(self.server_url)
         page_text = self.browser.find_element_by_tag_name('body').text
         self.assertNotIn('공작깃털 사기', page_text)
         self.assertNotIn('그물 만들기', page_text)
@@ -101,7 +101,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
 
     def test_layout_and_styling(self):
         #민수는 메인 페이지를 방문한다.
-        self.browser.get(self.live_server_url)
+        self.browser.get(self.server_url)
         self.browser.set_window_size(1024, 768)
 
         #그는 입력 상자가 가운데 배치된 것을 본다
