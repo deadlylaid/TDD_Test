@@ -8,23 +8,74 @@ from .base import FunctionalTest
 import sys
 
 
-class ItemValidationTest(FunctionalTest):
+class NewVisitorTest(FunctionalTest):
 
-    def test_cannot_add_empty_list_item(self):
-        #에디스는 메인 페이지에 접속해서 빈 아이템을 실수로 등록하려고 한다
-        # 입력상자가 비어있는 상태에서 엔터키를 누른다
+    def test_can_start_a_list_and_retrieve_it_later(self):
+        # 민수는 멋진 작업 목록 온라인 앱이 나왔다는 소식을 듣고
+        # 해당 웹사이트로 이동한다
+        self.browser.get(self.server_url)
 
-        #페이지가 새로고침 되고, 빈아이템을 등록할 수 없다는
-        #메시지가 표시된다.
+        # 웹페이지 타이틀과 헤더가 'To-Do'를 표시하고 있다
+        self.assertIn('To-Do', self.browser.title)
+        header_text = self.browser.find_element_by_tag_name('h1').text
+        self.assertIn('To-Do', header_text)
 
-        #다른 아이템을 입력하면 정상처리된다
+        # 그는 바로 작업을 추가하기로 한다
+        inputbox = self.browser.find_element_by_id('id_new_item')
+        self.assertEqual(
+                inputbox.get_attribute('placeholder'),
+                '작업 아이템 입력'
+        )
 
-        #고의로 다시한번 빈 아이템을 등록한다
+        #"공작깃털 사기"라고 텍스트 상자에 입력한다
+        #(민수의 취미는 날치 잡이용 그물을 만들어 내는 것이다)
+        inputbox.send_keys('공작깃털 사기')
 
-        #리스트 페이지에 에러메시지가 표시된다.
+        #엔터키를 치면 페이지가 갱신되고 작업목록에
+        #"1:공작깃털 사기" 아이템이 추가된다
+        inputbox.send_keys(Keys.ENTER)
+        minsoo_list_url = self.browser.current_url
+        self.assertRegex(minsoo_list_url, '/lists/.+')
+        self.check_for_row_in_list_table('1: 공작깃털 사기')
+        
 
-        #아이템을 입력하면 정상작동한다.
+        #추가 아이템을 입력할 수 있는 여분의 텍스트 상자가 존재한다
+        #다시 "공작깃털을 이용해서 그물 만들기"라고 입력한다(민수는 매우 체계적인 사람이다)
+        inputbox = self.browser.find_element_by_id('id_new_item')
+        inputbox.send_keys('공작깃털을 이용해서 그물 만들기')
+        inputbox.send_keys(Keys.ENTER)
 
-        self.fail('wirte me!')
 
+        #페이지는 다시 갱신되고, 두 개 아이템이 목록에 보인다
+        self.check_for_row_in_list_table('1: 공작깃털 사기')
+        self.check_for_row_in_list_table('2: 공작깃털을 이용해서 그물 만들기')
 
+        #새로운 사용자인 남의현이 접속한다.
+
+        ##새로운 브라우저 세션을 이용해서 민수의 정보가
+        ##쿠키를 통해 유입되는 것을 방지한다.
+        self.browser.quit()
+        self.browser = webdriver.Firefox()
+        
+        ##남의현이 브라우저에 접속한다.
+        ##민수의 리스트는 보이지 않는다.
+        self.browser.get(self.server_url)
+        page_text = self.browser.find_element_by_tag_name('body').text
+        self.assertNotIn('공작깃털 사기', page_text)
+        self.assertNotIn('그물 만들기', page_text)
+
+        ## 남의현이 새로운 작업 아이템을 입력하기 시작한다.
+        ## 그녀는 민수보다 재미가 없다
+        inputbox = self.browser.find_element_by_id('id_new_item')
+        inputbox.send_keys('우유 사기')
+        inputbox.send_keys(Keys.ENTER)
+
+        #남의현이 전용 URL을 취득한다
+        euihyun_list_url = self.browser.current_url
+        self.assertRegex(euihyun_list_url, '/lists/.+')
+        self.assertNotEqual(euihyun_list_url, minsoo_list_url)
+
+        #민수가 입력한 흔적이 없다는 것을 다시 확인한다.
+        page_text = self.browser.find_element_by_tag_name('body').text
+        self.assertNotIn('공작깃털 사기', page_text)
+        self.assertNotIn('그물 만들기', page_text)
