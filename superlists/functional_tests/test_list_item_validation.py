@@ -19,7 +19,7 @@ class ItemValidationTest(FunctionalTest):
         #페이지가 새로고침 되고, 빈아이템을 등록할 수 없다는
         #메시지가 표시된다.
         error = self.browser.find_element_by_css_selector('.has-error')
-        self.assertEqual(error.text, "빈 아이템은 등록할 수 없다.")
+        self.assertEqual(error.text, "You Can't Have An Empty List Item")
 
         #다른 아이템을 입력하면 정상처리된다
         self.browser.find_element_by_id('id_new_item').send_keys('1: 우유 사기\n')
@@ -31,7 +31,7 @@ class ItemValidationTest(FunctionalTest):
         #리스트 페이지에 에러메시지가 표시된다.
         self.check_for_row_in_list_table('1: 우유 사기')
         error = self.browser.find_element_by_css_selector('.has-error')
-        self.assertEqual(error.text, "빈 아이템을 등록할 수 없습니다")
+        self.assertEqual(error.text, "You Can't Have An Empty List Item")
 
         #아이템을 입력하면 정상작동한다.
         self.browser.find_element_by_id('id_new_item').send_keys('tea 만들기\n')

@@ -1,11 +1,14 @@
 from django.core.urlresolvers import resolve
+from django.core.exceptions import ValidationError
 from django.test import TestCase
 
 from lists.models import Item, List
 
+
 class ListAndItemModelTest(TestCase):
 
     def test_saving_and_retrieving_items(self):
+
         list_ = List()
         list_.save()
 
@@ -31,3 +34,10 @@ class ListAndItemModelTest(TestCase):
         self.assertEqual(second_saved_item.text, '두 번째 아이템')
         self.assertEqual(first_saved_item.list, list_)
 
+    def test_cannot_save_empty_list_items(self):
+        
+        list_ = List.objects.create()
+        item = Item(list=list_, text='')
+        with self.assertRaises(ValidationError):
+            item.save()
+            item.full_clean()
