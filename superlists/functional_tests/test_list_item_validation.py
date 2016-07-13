@@ -22,7 +22,7 @@ class ItemValidationTest(FunctionalTest):
         self.assertEqual(error.text, "You Can't Have An Empty List Item")
 
         #다른 아이템을 입력하면 정상처리된다
-        self.browser.find_element_by_id('id_new_item').send_keys('1: 우유 사기\n')
+        self.browser.find_element_by_id('id_new_item').send_keys('우유 사기\n')
         self.check_for_row_in_list_table('1: 우유 사기')
 
         #고의로 다시한번 빈 아이템을 등록한다
