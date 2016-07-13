@@ -49,6 +49,7 @@ class NewListTest(TestCase):
         new_list = List.objects.first()
         self.assertRedirects(response, '/lists/%d/' %(new_list.id,))
 
+
 #        self.assertRedirects(response, '/lists/the-only-list-in-the-world/')
 
 #        self.assertEqual(response.status_code, 302)        
@@ -117,13 +118,27 @@ class ListViewTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'home.html')
         expected_error = escape("You Can't Have An Empty List Item")
-        #print(response.content.decode())
+#        print(response.content.decode())
         self.assertContains(response, expected_error)
 
     def test_invalid_list_items_arent_saved(self):
         self.client.post('/lists/new', data={'item_text': ''})
         self.assertEqual(List.objects.count(),0)
         self.assertEqual(Item.objects.count(),0)
+
+    def test_validation_errors_end_up_on_lists_page(self):
+        list_ = List.objects.create()
+        response = self.client.post(
+                '/lists/%d/' % (list_.id,),
+                data = {'item_text':''}
+                )
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'list.html')
+        expected_error = escape("You Can't Have An Empty List Item")
+
+        self.assertContains(response, expected_error)
+
+
 
 
 #strip() 은 텍스트 편집기에 따라 파일 마지막에 라인(\n)이 강제로 추가되는 것을 방지하기 위해 쓴다
