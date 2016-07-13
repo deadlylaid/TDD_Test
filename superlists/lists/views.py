@@ -48,6 +48,6 @@ def new_list(request):
         return render(request, 'home.html',{"error":error})
                 
     return redirect(
-            '/lists/%d/' % (list_.id,)
+            list_
             )
 
