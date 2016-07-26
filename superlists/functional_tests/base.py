@@ -35,3 +35,6 @@ class FunctionalTest(StaticLiveServerTestCase):
         #rows 안에 있는 값들을 뽑아서 row.text라는 속성을 뽑은 후에 list에 담는다
         #그 안에 row_text가 존재하는지 확인한다.
         self.assertIn(row_text, [row.text for row in rows])
+
+    def get_item_input_box(self):
+        return self.browser.find_element_by_id('id_text')
