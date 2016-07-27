@@ -17,39 +17,48 @@ def home_page(request):
 def view_list(request, list_id):
 
     list_ = List.objects.get(id=list_id)
-    error = None
-#    items = Item.objects.filter(list=list_)
+    form = ItemForm()
 
     if request.method == 'POST':
-        try:
-            item = Item(text=request.POST['text'], list=list_)
-            item.full_clean()
-            item.save()
+        form = ItemForm(data=request.POST)
+        if form.is_valid():
+            Item.objects.create(text=request.POST['text'], list=list_)
             return redirect(list_)
-        except ValidationError:
-            error = "You Can't Have An Empty List Item"
-
+        
     return render(
             request,
             'list.html',
-            {'list':list_,
-            'error': error}
+            {
+                'list':list_,
+                'form':form,
+                }
             )
-
-def new_list(request):
-    list_ = List.objects.create()
-    
-    item = Item.objects.create(text=request.POST['text'], list=list_)
-
-    try:
-        item.full_clean()
-        item.save()
-    except ValidationError:
-        list_.delete()
-        error = "You Can't Have An Empty List Item"
-        return render(request, 'home.html',{"error":error})
                 
-    return redirect(
-            list_
-            )
+def new_list(request):
+    form =ItemForm(data=request.POST)
 
+    if form.is_valid():
+        list_=List.objects.create()
+        Item.objects.create(text=request.POST['text'], list=list_)
+        return redirect(list_)
+
+    else:
+        error = "You Can't Have An Empty List Item"
+        return render(request, 'home.html', {"form":form, "error":error})
+
+#    list_ = List.objects.create()
+#    
+#    item = Item.objects.create(text=request.POST['text'], list=list_)
+#
+#    try:
+#        item.full_clean()
+#        item.save()
+#    except ValidationError:
+#        list_.delete()
+#        error = "You Can't Have An Empty List Item"
+#        return render(request, 'home.html',{"error":error})
+#                
+#    return redirect(
+#            list_
+#            )
+#
